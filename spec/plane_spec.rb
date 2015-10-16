@@ -2,93 +2,45 @@ require 'plane'
 
 describe Plane do
 
-  let(:airport_allow){double(:airport_allow,  allow_landing?: true,
-                                              allow_take_off?: true,
-                                              receive_plane: nil,
-                                              release_plane: nil)}
-
-  let(:airport_not_allow){double(:airport_not_allow,  allow_landing?: false)}
-
-  let(:land_not_take_off){double(:land_not_take_off,  allow_landing?: true,
-                                                      allow_take_off?: false,
-                                                      receive_plane: nil,
-                                                      release_plane: nil)}
+  let(:plane){ described_class.new }
 
   it 'flying when created' do
-    expect(subject).to be_flying
+    expect(plane).to be_flying
   end
-
 
   describe 'landing' do
 
-    it 'can land at given airport' do
-      expect(subject).to respond_to(:land).with(1).argument
+    it 'can land' do
+      expect(plane).to respond_to(:land)
     end
 
-    it 'is landed after landing' do
-      subject.land(airport_allow)
-      expect(subject).to be_landed
-    end
-
-    it 'is located at given airport after landing' do
-      subject.land(airport_allow)
-      expect(subject.location).to eq airport_allow
-    end
-
-    it 'checks to see if airport allows landing' do
-      expect(airport_allow).to receive :allow_landing?
-      subject.land(airport_allow)
-    end
-
-    it 'calls airport#receive_plane method when landing is allowed' do
-      expect(airport_allow).to receive :receive_plane
-      subject.land(airport_allow)
-    end
-
-    it 'raises error when landing not allowed' do
-      expect{subject.land(airport_not_allow)}.to raise_error "Airport refuses landing request"
+    it 'is not flying after landing' do
+      plane.land
+      expect(plane).not_to be_flying
     end
 
     it 'raises error when already landed' do
-      subject.land(airport_allow)
-      expect{subject.land(airport_allow)}.to raise_error "Already landed"
+      plane.land
+      expect{plane.land}.to raise_error "Already landed"
     end
 
   end
-
 
   describe 'taking off' do
 
     it 'can take off' do
-      subject.land(airport_allow)
-      expect(subject).to respond_to(:take_off)
+      plane.land
+      expect(plane).to respond_to(:take_off)
     end
 
     it 'is flying after take off' do
-      subject.land(airport_allow)
-      subject.take_off
-      expect(subject).to be_flying
-    end
-
-    it 'calls airport#release_plane method when taking off' do
-      subject.land(airport_allow)
-      expect(airport_allow).to receive :release_plane
-      subject.take_off
+      plane.land
+      plane.take_off
+      expect(plane).to be_flying
     end
 
     it 'raises error when already flying' do
-      expect{subject.take_off}.to raise_error "Already flying"
-    end
-
-    it 'checks to see if airport allows take off' do
-      subject.land(airport_allow)
-      expect(subject.location).to receive :allow_take_off?
-      subject.take_off
-    end
-
-    it 'raises error when taking off is not allowed' do
-      subject.land(land_not_take_off)
-      expect{subject.take_off}.to raise_error "Airport refuses take off"
+      expect{plane.take_off}.to raise_error "Already flying"
     end
 
   end

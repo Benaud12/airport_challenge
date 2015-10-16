@@ -1,21 +1,7 @@
-class Weather
-
-  attr_reader :sunny
-
-  def initialize
-    if Random.rand(20) > 2
-      @sunny = true
-    else
-      @sunny = false
-    end
-  end
-
-  def sunny?
-    sunny
-  end
+module Weather
 
   def stormy?
-    !sunny
+    Random.rand(20) < 3
   end
 
 end

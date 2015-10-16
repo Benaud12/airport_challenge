@@ -2,57 +2,60 @@ require 'airport'
 
 describe Airport do
 
-  let(:plane){double(:plane)}
+  let(:airport){ described_class.new }
+  let(:plane){ double(:plane, land: nil, take_off: nil) }
 
   it 'has a default capacity' do
-    expect(subject.capacity).to eq described_class::DEFAULT_CAPACITY
+    expect(airport.capacity).to eq described_class::DEFAULT_CAPACITY
   end
 
-
-  describe 'landing' do
+  describe 'planes landing (in good weather)' do
 
     before(:each) do
-      allow(subject.weather).to receive(:stormy?) {false}
-      allow(subject).to receive(:weather_update) {
-          @weather}
+      allow(airport.weather).to receive(:stormy?) {false}
     end
 
-    it 'allows planes to land' do
-      expect(subject).to be_allow_landing
+    it 'allows landing' do
+      expect(airport).to be_allow_landing
+    end
+
+    it 'calls the planes land method' do
+      expect(plane).to receive :land
+      airport.receive_plane(plane)
     end
 
     it 'receives a plane' do
-      num_planes = subject.planes.count
-      subject.receive_plane(plane)
-      expect(subject.planes.count).to eq num_planes+1
+      airport.receive_plane(plane)
+      expect(airport.hangar).to include plane
     end
 
   end
 
 
-  describe 'take off' do
+  describe 'planes taking off (in good weather)' do
 
     before(:each) do
-      allow(subject.weather).to receive(:stormy?) {false}
-      allow(subject).to receive(:weather_update) {
-          @weather}
+      allow(airport.weather).to receive(:stormy?) {false}
+    end
+
+    it 'allows take off' do
+      expect(airport).to be_allow_take_off
     end
 
     it 'releases specific plane' do
-      p1 = double :p1
-      p2 = double :p2
-      p3 = double :p3
-      subject.receive_plane (p1)
-      subject.receive_plane (p2)
-      subject.receive_plane (p3)
-      expect(subject.release_plane(p2)).to eq p2
+      plane1 = (double :plane1, land: nil)
+      plane2 = (double :plane2, land: nil, take_off: nil)
+      plane3 = (double :plane3, land: nil)
+      airport.receive_plane (plane1)
+      airport.receive_plane (plane2)
+      airport.receive_plane (plane3)
+      expect(airport.release_plane(plane2)).to eq plane2
     end
 
-    it 'following take off from a full airport,
-          allows another plane to land' do
-      subject.capacity.times { subject.receive_plane(plane) }
-      subject.release_plane(plane)
-      expect(subject).to be_allow_landing
+    it 'calls the planes take_off method' do
+      airport.receive_plane(plane)
+      expect(plane).to receive :take_off
+      airport.release_plane(plane)
     end
 
   end
@@ -60,23 +63,35 @@ describe Airport do
 
   describe 'traffic control' do
 
-    context 'when airport is full' do
+    context 'when airport is full in good weather' do
 
       before(:each) do
-        allow(subject.weather).to receive(:stormy?) {false}
-        allow(subject).to receive(:weather_update) {
-          @weather}
-        subject.capacity.times {subject.receive_plane(plane)}
+        allow(airport.weather).to receive(:stormy?) {false}
+        airport.capacity.times {airport.receive_plane(plane)}
       end
 
-      it 'does not allow a plane to land' do
-        expect(subject).not_to be_allow_landing
+      it 'does not allow landing' do
+        expect(airport).not_to be_allow_landing
+      end
+
+      it 'does allow take off' do
+        expect(airport).to be_allow_take_off
       end
 
       it 'does not receive plane' do
-        num_planes = subject.planes.count
-        subject.receive_plane(plane)
-        expect(subject.planes.count).to eq num_planes
+        plane_count = airport.hangar.count
+        airport.receive_plane(plane)
+        expect(airport.hangar.count).to eq plane_count
+      end
+
+      it 'does not call the planes land method' do
+        expect(plane).not_to receive :land
+        airport.receive_plane(plane)
+      end
+
+      it 'following take off, allows another plane to land' do
+        airport.release_plane(plane)
+        expect(airport).to be_allow_landing
       end
 
     end
@@ -85,64 +100,33 @@ describe Airport do
     context 'stormy weather' do
 
       before(:each) do
-        allow(subject.weather).to receive(:stormy?) {true}
-        allow(subject).to receive(:weather_update) {
-          @weather}
+        allow(airport.weather).to receive(:stormy?) {true}
       end
 
-      it 'checks for stormy weather before allowing
-            landing' do
-        expect(subject.weather).to receive :stormy?
-        subject.allow_landing?
+      it 'checks weather before allowing landing' do
+        expect(airport.weather).to receive :stormy?
+        airport.allow_landing?
       end
 
       it 'doesn\'t allow landing' do
-        expect(subject).not_to be_allow_landing
+        expect(airport).not_to be_allow_landing
       end
 
       it 'doesn\'t receive planes' do
-        num_planes = subject.planes.count
-        subject.receive_plane(plane)
-        expect(subject.planes.count).to eq num_planes
+        airport.receive_plane(plane)
+        expect(airport.hangar).not_to include plane
       end
 
       it 'doesn\'t allow taking off' do
-        expect(subject).not_to be_allow_take_off
+        expect(airport).not_to be_allow_take_off
       end
 
       it 'doesn\'t release planes' do
-        allow(subject.weather).to receive(:stormy?) {false}
-        subject.receive_plane(plane)
-        num_planes = subject.planes.count
-        allow(subject.weather).to receive(:stormy?) {true}
-        subject.release_plane(plane)
-        expect(subject.planes.count).to eq num_planes
-      end
-
-    end
-
-    describe 'updates weather' do
-
-      it 'checks weather update before allowing landing' do
-        expect(subject).to receive(:weather_update)
-        subject.allow_landing?
-      end
-
-      it 'updates the weather before allowing landing' do
-        w1 = subject.weather
-        subject.allow_landing?
-        expect(subject.weather).not_to eq w1
-      end
-
-      it 'checks weather update before allowing take off' do
-        expect(subject).to receive(:weather_update)
-        subject.allow_take_off?
-      end
-
-      it 'updates the weather before allowing take off' do
-        w1 = subject.weather
-        subject.allow_take_off?
-        expect(subject.weather).not_to eq w1
+        allow(airport.weather).to receive(:stormy?) {false}
+        airport.receive_plane(plane)
+        allow(airport.weather).to receive(:stormy?) {true}
+        airport.release_plane(plane)
+        expect(airport.hangar).to include plane
       end
 
     end

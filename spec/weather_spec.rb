@@ -2,14 +2,16 @@ require 'weather'
 
 describe Weather do
 
-  it 'is sunny when rand(20) greater than 2' do
+  let(:dummy_class){ class Class; include Weather; end }
+
+  it 'is not stormy when rand(20) greater than 2' do
     allow(Random).to receive(:rand).with(20){3}
-    is_expected.to be_sunny
+    expect(dummy_class).not_to be_stormy
   end
 
   it 'is stormy when rand(20) less than 3' do
     allow(Random).to receive(:rand).with(20){2}
-    is_expected.to be_stormy
+    expect(dummy_class).to be_stormy
   end
 
 end
