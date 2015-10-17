@@ -1,28 +1,9 @@
 Airport Challenge
-=================
+=======================
 
-Instructions
----------
+## Synopsis
 
-* Challenge time: rest of the day and weekend, until Monday 9am
-* Feel free to use google, your notes, books, etc but work on your own
-* If you have a partial solution, **still check in a partial solution**
-* You must submit a pull request to this repo with your code by 9am Monday morning
-* If you do not submit a pull request, we will not be able to see your progress
-
-Steps
--------
-
-1. Fill out your learning plan self review for the week: https://github.com/makersacademy/learning_plan_september2015 (start by forking this repo, then edit week 1 - you can edit directly on Github)
-2. Fork this repo, and clone to your local machine
-3. run the command `gem install bundle`
-4. When the installation completes, run `bundle`
-3. Complete the following task:
-
-Task
------
-
-We have a request from a client to write the software to control the flow of planes at an airport. The planes can land and take off provided that the weather is sunny. Occasionally it may be stormy, in which case no planes can land or take off.  Here are the user stories that we worked out in collaboration with the client.
+Write software to control the flow of planes at an airport. The planes can land and take off in good weather. Occasionally it may be stormy, in which case no planes can land or take off. Here are some example user stories highlighting the requirements.
 
 ```
 As a pilot
@@ -42,29 +23,56 @@ So that I can avoid accidents
 I want to be able to prevent airplanes landing or taking off when the weather is stormy
 ```
 
-Your task is to test drive the creation of a set of classes/modules to satisfy all the above user stories. You will need to use a random number generator to set the weather (it is normally sunny but on rare occasions it may be stormy). In your tests, you'll need to use a stub to override random weather to ensure consistent test behaviour. Finally, every plane must have a status indicating whether it's flying or landed. 
+The task is to test drive the creation of a set of classes/modules to satisfy all the above user stories. The weather will generally be ok but on occasion it will be stormy.
 
-The existing tests in the spec folder, and base classes in the lib folder are provided merely as a general guide.  Please create more classes, unit and/or feature tests as appropriate.  The existing specs provide the layout of a set of pending unit tests. It is up to you to implement the tests and create additional tests as necessary.
+## To run this version
 
-For overriding random weather behaviour, please read the documentation to learn how to use test doubles: https://www.relishapp.com/rspec/rspec-mocks/docs . There’s an example of using a test double to test a die that’s relevant to testing random weather in the test.
+This is designed to run in the command line.
 
-As mentioned above the existing tests are there just for the inspiration if you need it. You don’t have to implement every single test there and you aren’t limited by the tests there either. Feel free to modify the tests as you see fit.
+- Fork this repository and clone it to your local machine
+- Run `gem install bundle` in the command line
+- Once complete, run `bundle` to install the relevant gems
+- You may then create airports and planes to your heart's content, as per the example below...
 
-Please create separate files for every class, module and test suite. 
+```
+$ irb
+2.2.1 :001 > airport = Airport.new
+ => #<Airport:0x007fc26213a818 @capacity=10, @hangar=[]>
+2.2.1 :002 > plane = Plane.new
+ => #<Plane:0x007fc2621308e0 @flying=true>
+2.2.1 :003 > airport.receive plane
+ => [#<Plane:0x007fc2621308e0 @flying=false>]
+2.2.1 :004 > airport.release plane
+ => #<Plane:0x007fc2621308e0 @flying=true>
+2.2.1 :005 >
+```
 
-The submission will be judged on the following criteria:
+## Technologies Used
 
-* Tests pass
-* Tests coverage is good
-* The code is elegant: every class has a clear responsibility, methods are short etc.
- 
-BONUS
-* Write an RSpec **feature** test that lands and takes off a number of planes...
+- Ruby
+- RSpec
 
-Note that is a practice 'Tech Test' of the kinds that employers use to screen developer applicants.  More detailed submission requirements/guidelines are in [CONTRIBUTING.md](CONTRIBUTING.md)
+## Job List
 
-Finally, don’t overcomplicate things. This task isn’t as hard as it may seem at first. 
+- Using Ruby and testing in RSpec, test drive the creation of a set of classes/modules to satisfy the above user stories
+- Implementing the [SOLID](https://en.wikipedia.org/wiki/SOLID_(object-oriented_design)) principles of object-oriented design
 
-* **Submit a pull request early.**  There are various checks that happen automatically when you send a pull request.  **You should pay attention to these - the results will be added to your pull request**.  Green is good.
 
-* Finally submit a pull request before Monday at 9am with your solution or partial solution.  However much or little amount of code you wrote please please please submit a pull request before Monday at 9am
+## Favourite Code Snippet
+
+Quite a neat method for selecting and releasing a specific plane...
+
+~~~
+while hangar.last != plane
+  hangar.rotate!
+end
+hangar.last.take_off
+hangar.pop
+~~~
+
+
+## Takeaway
+
+A useful challenge that gives you chance to play with, and helps to understand, some of the basic principles of Object Oriented Design, including single responsibility and dependaency inversion.
+
+Also good for introducing Test Driven Development.
