@@ -1,7 +1,3 @@
-
-![travis-cl](https://travis-ci.org/benaud12/airport_challenge.svg?branch=master)
-
-
 Airport Challenge
 =======================
 
