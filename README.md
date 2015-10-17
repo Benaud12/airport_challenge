@@ -1,3 +1,7 @@
+
+![travis-cl](https://travis-ci.org/benaud12/airport_challenge.svg?branch=master)
+
+
 Airport Challenge
 =======================
 
@@ -25,6 +29,7 @@ I want to be able to prevent airplanes landing or taking off when the weather is
 
 The task is to test drive the creation of a set of classes/modules to satisfy all the above user stories. The weather will generally be ok but on occasion it will be stormy.
 
+
 ## To run this version
 
 This is designed to run in the command line.
@@ -47,10 +52,12 @@ $ irb
 2.2.1 :005 >
 ```
 
+
 ## Technologies Used
 
 - Ruby
 - RSpec
+
 
 ## Job List
 
