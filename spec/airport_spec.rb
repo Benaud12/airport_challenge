@@ -12,7 +12,7 @@ describe Airport do
   describe 'planes landing (in good weather)' do
 
     before(:each) do
-      allow(airport).to receive(:stormy_weather?) {false}
+      allow(airport.weather).to receive(:stormy?) {false}
     end
 
     it 'allows landing' do
@@ -35,7 +35,7 @@ describe Airport do
   describe 'planes taking off (in good weather)' do
 
     before(:each) do
-      allow(airport).to receive(:stormy_weather?) {false}
+      allow(airport.weather).to receive(:stormy?) {false}
     end
 
     it 'allows take off' do
@@ -73,7 +73,7 @@ describe Airport do
     context 'when airport is full in good weather' do
 
       before(:each) do
-        allow(airport).to receive(:stormy_weather?) {false}
+        allow(airport.weather).to receive(:stormy?) {false}
         airport.capacity.times {airport.receive(plane)}
       end
 
@@ -107,11 +107,11 @@ describe Airport do
     context 'stormy weather' do
 
       before(:each) do
-        allow(airport).to receive(:stormy_weather?) {true}
+        allow(airport.weather).to receive(:stormy?) {true}
       end
 
       it 'checks weather before allowing landing' do
-        expect(airport).to receive :stormy_weather?
+        expect(airport.weather).to receive :stormy?
         airport.allow_landing?
       end
 
@@ -129,9 +129,9 @@ describe Airport do
       end
 
       it 'doesn\'t release planes' do
-        allow(airport).to receive(:stormy_weather?) {false}
+        allow(airport.weather).to receive(:stormy?) {false}
         airport.receive(plane)
-        allow(airport).to receive(:stormy_weather?) {true}
+        allow(airport.weather).to receive(:stormy?) {true}
         airport.release(plane)
         expect(airport.hangar).to include plane
       end

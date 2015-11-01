@@ -38,11 +38,11 @@ class Airport
     true
   end
 
-  private
-
   def stormy_weather?
     weather.stormy?
   end
+
+  private
 
   def full?
     return true if hangar.count == capacity
