@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/Benaud12/airport_challenge.svg?branch=master)](https://travis-ci.org/Benaud12/airport_challenge)
+[![Build Status](https://travis-ci.org/Benaud12/airport_challenge.svg?branch=master)](https://travis-ci.org/Benaud12/airport_challenge)  [![Coverage Status](https://coveralls.io/repos/Benaud12/airport_challenge/badge.svg?branch=master&service=github)](https://coveralls.io/github/Benaud12/airport_challenge?branch=master)
 
 Airport Challenge
 =======================
